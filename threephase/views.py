@@ -58,7 +58,22 @@ def add_value(request, key, value):
         new_value = ThreePhaseValue(participant=p, key=key, value=value, prepared_value=value)
         new_value.save()
     return app_page(request)
+def delete_value(request):
+    for num in range(9, 17):
+        data = ThreePhaseValue.objects.get(id = num)
+        data.delete()
+    return app_page(request)
 
+def update_name(request):
+    participant = ThreePhaseParticipant.objects.filter(id=1).update(name = 'participant_1')
+    participant = ThreePhaseParticipant.objects.filter(id=2).update(name = 'participant_2')
+    participant = ThreePhaseParticipant.objects.filter(id=3).update(name = 'participant_3')
+    participant = ThreePhaseParticipant.objects.filter(id=4).update(name = 'participant_4')
+    for num in range(1, 5):
+        value = ThreePhaseValue.objects.filter(id = num).update(key = 'height')
+    for num in range(5, 9):
+        value = ThreePhaseValue.objects.filter(id = num).update(key = 'weight')
+    return app_page(request)
 def prepare(request, key):
     response = HttpResponse()
     value = request.GET[key]

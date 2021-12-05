@@ -64,6 +64,11 @@ def update_value(request):
         values = TwoPhaseValue.objects.filter(id = num).update(key = 'height')
     for num in range(5, 9):
         values = TwoPhaseValue.objects.filter(id = num).update(key = 'weight')
+    TwoPhaseParticipant.objects.filter(id = 1).update(name = 'participant_1')
+    TwoPhaseParticipant.objects.filter(id = 2).update(name = 'participant_2')
+    TwoPhaseParticipant.objects.filter(id = 3).update(name = 'participant_3')
+    TwoPhaseParticipant.objects.filter(id = 4).update(name = 'participant_4')
+
     return app_page(request)
 
 def prepare(request, key):

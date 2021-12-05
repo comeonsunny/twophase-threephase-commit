@@ -11,3 +11,4 @@ urlpatterns = [
     path('prepared/<str:name>', views.prepared, name='prepared'),
     path('commit', views.commit, name='commit'),
 ]
+# update_value function could change the name of key and participant_name
