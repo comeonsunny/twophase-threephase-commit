@@ -23,23 +23,40 @@
 
         <!-- Prepare -->
         {% for v in values %}
-        <form class="col-sm-6 mt-3" action="/three-phase/prepare/{{ v.key }}" method="get">
-          <div class="row g-3 align-items-enter">
-            <div class="col-auto">
-              <label for="{{ v.key }}1" class="col-form-label">{{ v.key }}</label>
+          {% if v.key == 'height'%}
+          <form class="col-sm-6 mt-3" action="/three-phase/prepare/{{ v.key }}" method="get">
+            <div class="row g-3 align-items-enter">
+              <div class="col-auto">
+                <label for="{{ v.key }}1" class="col-form-label">{{ v.key }}</label>
+              </div>
+              <div class="col-auto">
+                <input type="text" id="{{ v.key }}1" name="{{ v.key }}" class="form-control">
+              </div>
+              <div class="col-auto">
+                <input type="submit" class="btn btn-primary" value="Prepare">
+              </div>
             </div>
-            <div class="col-auto">
-              <input type="text" id="{{ v.key }}1" name="{{ v.key }}" class="form-control">
+          </form>
+          {% endif %}
+          {% if v.key == 'weight' %}
+          <form class="col-sm-6 mt-3" action="/three-phase/prepare/{{ v.key }}" method="get">
+            <div class="row g-3 align-items-enter">
+              <div class="col-auto">
+                <label for="{{ v.key }}1" class="col-form-label">{{ v.key }}</label>
+              </div>
+              <div class="col-auto">
+                <input type="text" id="{{ v.key }}1" name="{{ v.key }}" class="form-control">
+              </div>
+              <div class="col-auto">
+                <input type="submit" class="btn btn-primary" value="Prepare">
+              </div>
             </div>
-            <div class="col-auto">
-              <input type="submit" class="btn btn-primary" value="Prepare">
-            </div>
-          </div>
-        </form>
+          </form>
+          {% endif %}
         {% endfor %}
 
         <!-- Commit -->
-        <a class="col-sm-6 mt-3 ml-3 btn btn-success" href="/three-phase/pre_commit">PreCommit</a>
+        <a class="col-sm-6 mt-3 ml-3 btn btn-success" href="/three-phase/pre_commit">Broadcast</a>
         <a class="col-sm-6 mt-3 ml-3 btn btn-success" href="/three-phase/commit">Commit</a>
       </div>
     </div>
@@ -69,6 +86,10 @@
                   <div class="text-info">PreCommit</div>
                   {% elif p.state == 4 %}
                   <div class="text-info">PreCommitted</div>
+                  {% elif p.state == 5 %}
+                  <div class="text-info">Agree</div>
+                  {% elif p.state == 6 %}
+                  <div class="text-info">Disagree</div>
                   {% endif %}
                 </h5>
             </div>
@@ -77,13 +98,16 @@
           <div class="card-body">
             <ul>
             {% for v in p.values %}
+              {% if v.prepared_value != 'no' %} 
               <li>
                 <ul>
-                  <li>Key: {{ v.key }}</li>
-                  <li>Value: {{ v.value }}</li>
+                  <li> {{ v.key}} : {{ v.value }}</li>
+                 <!-- <li>Key: {{ v.key }}</li> 
+                  <li>Value: {{ v.value }}</li>-->
                   <!-- <li>pValue: {{ v.prepared_value }}</li> -->
                 </ul>
               </li>
+              {% endif %}
             {% endfor %}
             </ul>
           </div>
@@ -91,6 +115,11 @@
           {% if p.state == 1 %}
           <div class="card-footer">
             <a class="btn btn-primary" href="/three-phase/prepared/{{ p.name }}">Prepared</a>
+          </div>
+          {% elif p.state == 2 %}
+          <div class="card-footer">
+            <a class="btn btn-primary" href="/three-phase/Agree/{{ p.name }}">Agree</a>
+            <a class="btn btn-primary" href="/three-phase/Disagree/{{ p.name }}">Disagree</a>
           </div>
           {% elif p.state == 3 %}
           <div class="card-footer">

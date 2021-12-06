@@ -45,7 +45,7 @@ def add_participant(request, participant_name):
 
     return app_page(request)
 
-def add_value(request, key, value):
+def add_value(request, key, value, prepared_value):
     response = HttpResponse()
     participants = ThreePhaseParticipant.objects.all()
     values = ThreePhaseValue.objects.all()
@@ -55,7 +55,7 @@ def add_value(request, key, value):
             return response
 
     for p in participants:
-        new_value = ThreePhaseValue(participant=p, key=key, value=value, prepared_value=value)
+        new_value = ThreePhaseValue(participant=p, key=key, value=value, prepared_value= prepared_value)
         new_value.save()
     return app_page(request)
 def delete_value(request):
@@ -86,8 +86,9 @@ def prepare(request, key):
         p.state = 1
         p.save()
     for v in values:
-        v.prepared_value = value
-        v.save()
+        if v.key == key:
+            v.prepared_value = value
+            v.save()
     return app_page(request)
 
 def prepared(request, name):
@@ -104,6 +105,18 @@ def prepared(request, name):
 
 def pre_commit(request):
     context = get_context()
+    response = HttpResponse()
+    participants = ThreePhaseParticipant.objects.all()
+    values = ThreePhaseValue.objects.all()
+    for p in context['participants']:
+        if (p.state == 5 or p.state == 6):
+            for v in values:
+                if v.key == p.name:
+                    v.prepared_value = 'yes'
+                    v.save()
+        
+           
+    '''
     flag = True
     for p in context['participants']:
         if p.state != 2:
@@ -116,7 +129,8 @@ def pre_commit(request):
             for v in p.values:
                 v.prepared_value = v.value
                 v.save()
-        p.save()
+        p.save() 
+    '''
     return app_page(request)
 
 def pre_committed(request, name):
@@ -127,7 +141,43 @@ def pre_committed(request, name):
             p.save()
     return app_page(request)
 
+def Agree(request, name):
+    context = get_context()
+    for p in context['participants']:
+        if p.name == name:
+            p.state = 5
+            p.save()
+    for v in context['values']:
+        if v.key == name:
+            v.value = 'Agree'
+            #v.prepared_value = 'yes'
+            v.save()
+    return app_page(request)
+
+def Disagree(request, name):
+    context = get_context()
+    for p in context['participants']:
+        if p.name == name:
+            p.state = 6
+            p.save()
+    for v in context['values']:
+        if v.key == name:
+            v.value = 'Disagree'
+            #v.prepared_value = 'yes'
+            v.save()
+    return app_page(request)
+
 def commit(request):
+    for num in range(109, 113):
+        ThreePhaseValue.objects.filter(id=num).update(key = 'participant_1')
+    for num in range(113, 117):
+        ThreePhaseValue.objects.filter(id=num).update(key = 'participant_2')
+    for num in range(117, 121):
+        ThreePhaseValue.objects.filter(id=num).update(key = 'participant_3')
+    for num in range(121, 125):
+        ThreePhaseValue.objects.filter(id=num).update(key = 'participant_4')
+    return app_page(request)
+    '''
     context = get_context()
     flag = False
     for p in context['participants']:
@@ -147,5 +197,9 @@ def commit(request):
             for v in p.values:
                 v.prepared_value = v.value
                 v.save()
-
     return app_page(request)
+
+    for num in range(69, 109):
+        ThreePhaseValue.objects.filter(id = num).delete()
+    return app_page(request)
+    ''' 
